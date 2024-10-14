@@ -58,6 +58,11 @@ public class WindowManagerPlusFlutterWindow: NSPanel {
         hiddenWindowAtLaunch()
     }
     
+    override public func cancelOperation(_ sender: Any?) {
+        // Do nothing to disable the ESC key binding
+    }
+    
+    
     deinit {
         debugPrint("WindowManagerPlusFlutterWindow dealloc")
     }
@@ -220,11 +225,11 @@ public class WindowManagerPlus: NSObject, NSWindowDelegate {
     public func restore() {
         mainWindow.deminiaturize(nil)
     }
-
+    
     public func isDockable() -> Bool {
         return false
     }
-
+    
     public func isDocked() -> Int {
         return 0;
     }
