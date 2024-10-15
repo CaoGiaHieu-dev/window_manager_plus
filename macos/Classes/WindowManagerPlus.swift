@@ -53,15 +53,14 @@ extension NSRect {
 
 /// Add extra hooks for window
 public class WindowManagerPlusFlutterWindow: NSPanel {
-    override public func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {
-        super.order(place, relativeTo: otherWin)
-        hiddenWindowAtLaunch()
-    }
+        override public func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {
+            super.order(place, relativeTo: otherWin)
+            hiddenWindowAtLaunch()
+        }
     
     override public func cancelOperation(_ sender: Any?) {
         // Do nothing to disable the ESC key binding
     }
-    
     
     deinit {
         debugPrint("WindowManagerPlusFlutterWindow dealloc")
@@ -82,7 +81,6 @@ public class WindowManagerPlus: NSObject, NSWindowDelegate {
         if let RegisterGeneratedPlugins = WindowManagerPlusPlugin.RegisterGeneratedPlugins {
             autoincrementId += 1
             let windowId = autoincrementId
-            
             let project = FlutterDartProject()
             var commandLineArguments = [String(windowId)]
             commandLineArguments.append(contentsOf: args)
@@ -168,7 +166,7 @@ public class WindowManagerPlus: NSObject, NSWindowDelegate {
     }
     
     public func focus() {
-        NSApp.activate(ignoringOtherApps: true)
+        NSApp.activate(ignoringOtherApps: false)
         mainWindow.makeKeyAndOrderFront(nil)
     }
     
@@ -184,7 +182,7 @@ public class WindowManagerPlus: NSObject, NSWindowDelegate {
         mainWindow.setIsVisible(true)
         DispatchQueue.main.async {
             self.mainWindow.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
+            NSApp.activate(ignoringOtherApps: false)
         }
     }
     
@@ -624,6 +622,11 @@ public class WindowManagerPlus: NSObject, NSWindowDelegate {
     public func windowDidBecomeKey(_ notification: Notification) {
         if (mainWindow is NSPanel) {
             emitEvent("focus");
+            // Trigger to resume
+            var windowFrame = mainWindow.frame
+            let oldWidth = windowFrame.size.width
+            let oldHeight = windowFrame.size.height
+            mainWindow.setFrame(windowFrame, display: true)
         }
     }
     
