@@ -168,7 +168,7 @@ public class WindowManagerPlus: NSObject, NSWindowDelegate {
     }
     
     public func focus() {
-        NSApp.activate(ignoringOtherApps: false)
+        NSApp.activate(ignoringOtherApps: true)
         mainWindow.makeKeyAndOrderFront(nil)
     }
     
