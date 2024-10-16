@@ -622,7 +622,13 @@ public class WindowManagerPlus: NSObject, NSWindowDelegate {
     public func windowDidBecomeKey(_ notification: Notification) {
         if (mainWindow is NSPanel) {
             emitEvent("focus");
-            mainWindow.delegate?.windowDidDeminiaturize?(notification)
+            if (id != 0){
+                let oldFrame = mainWindow.frame;
+                minimize();
+                mainWindow.setFrame(oldFrame, display: true)
+                
+            }
+            
         }
     }
     
