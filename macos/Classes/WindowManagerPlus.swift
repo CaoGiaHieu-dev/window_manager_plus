@@ -53,10 +53,10 @@ extension NSRect {
 
 /// Add extra hooks for window
 public class WindowManagerPlusFlutterWindow: NSPanel {
-        override public func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {
-            super.order(place, relativeTo: otherWin)
-            hiddenWindowAtLaunch()
-        }
+    override public func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {
+        super.order(place, relativeTo: otherWin)
+        hiddenWindowAtLaunch()
+    }
     
     override public func cancelOperation(_ sender: Any?) {
         // Do nothing to disable the ESC key binding
@@ -99,6 +99,19 @@ public class WindowManagerPlus: NSObject, NSWindowDelegate {
             WindowManagerPlus.windows[windowId] = window
             
             window.makeKeyAndOrderFront(nil)
+            
+            for (_, wnd) in WindowManagerPlus.windows {
+                if wnd?.isVisible ?? false {
+                    DispatchQueue.main.async {
+                        wnd?.orderOut(nil)
+                        DispatchQueue.main.async {
+                            wnd?.setIsVisible(true)
+                            wnd?.makeKeyAndOrderFront(nil)
+                            NSApp.activate(ignoringOtherApps: false)
+                        }
+                    }
+                }
+            }
             
             return windowId
         }
@@ -622,13 +635,6 @@ public class WindowManagerPlus: NSObject, NSWindowDelegate {
     public func windowDidBecomeKey(_ notification: Notification) {
         if (mainWindow is NSPanel) {
             emitEvent("focus");
-            if (id != 0){
-                let oldFrame = mainWindow.frame;
-                minimize();
-                mainWindow.setFrame(oldFrame, display: true)
-                
-            }
-            
         }
     }
     
